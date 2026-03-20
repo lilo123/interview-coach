@@ -20,13 +20,13 @@ export default function App() {
   const [audioUrl, setAudioUrl] = useState(null);
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recognitionRef = useRef(null);
 
   useEffect(() => {
-    // Setup Speech Recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
@@ -41,10 +41,17 @@ export default function App() {
         }
         setTranscript(currentTranscript);
       };
+      
+      recognition.onerror = (e) => {
+         console.error("Speech recognition error", e);
+         if (e.error !== 'no-speech') {
+             setErrorMsg("Transcription error: " + e.error);
+         }
+      };
 
       recognitionRef.current = recognition;
     } else {
-      console.warn("Speech Recognition API not supported in this browser.");
+      setErrorMsg("⚠️ Live transcription is not supported in this browser. Please use Safari (on iPhone) or Chrome (on Android/Desktop).");
     }
   }, []);
 
@@ -59,10 +66,12 @@ export default function App() {
     setTranscript('');
     setAudioUrl(null);
     setFeedback('');
+    setErrorMsg('');
   };
 
   const startRecording = async () => {
     try {
+      setErrorMsg('');
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
@@ -75,7 +84,9 @@ export default function App() {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        // Fix for iOS Safari: Use default mimeType instead of hardcoding webm
+        const mimeType = mediaRecorder.mimeType || 'audio/mp4';
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         const url = URL.createObjectURL(audioBlob);
         setAudioUrl(url);
       };
@@ -94,7 +105,7 @@ export default function App() {
       }
     } catch (err) {
       console.error("Error accessing microphone:", err);
-      alert("Please allow microphone access to record.");
+      setErrorMsg("Please allow microphone access to record.");
     }
   };
 
@@ -193,6 +204,12 @@ export default function App() {
                 Save
               </button>
             </div>
+          </div>
+        )}
+
+        {errorMsg && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg border border-red-300 text-sm">
+            {errorMsg}
           </div>
         )}
 
