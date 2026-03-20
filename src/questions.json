@@ -1,0 +1,8 @@
+[
+  { "id": 1, "category": "Behavioral", "question": "Tell me about a time you faced a significant challenge at work and how you overcame it." },
+  { "id": 2, "category": "Behavioral", "question": "Describe a situation where you had to work with a difficult team member." },
+  { "id": 3, "category": "Technical", "question": "Explain the difference between synchronous and asynchronous programming." },
+  { "id": 4, "category": "Product", "question": "How would you design an elevator system for a 100-story building?" },
+  { "id": 5, "category": "General", "question": "Where do you see yourself in five years?" },
+  { "id": 6, "category": "Leadership", "question": "Tell me about a time you had to lead a project with limited resources." }
+]
