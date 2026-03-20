@@ -84,7 +84,6 @@ export default function App() {
       };
 
       mediaRecorder.onstop = () => {
-        // Fix for iOS Safari: Use default mimeType instead of hardcoding webm
         const mimeType = mediaRecorder.mimeType || 'audio/mp4';
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         const url = URL.createObjectURL(audioBlob);
@@ -141,7 +140,7 @@ export default function App() {
           "X-Title": "Interview Coach App"
         },
         body: JSON.stringify({
-          model: "google/gemma-3-27b-it:free", 
+          model: "mistralai/mistral-small-3.1-24b-instruct:free", 
           messages: [
             { 
               role: "system", 
@@ -159,7 +158,7 @@ export default function App() {
       if (data.choices && data.choices[0]) {
         setFeedback(data.choices[0].message.content);
       } else {
-        setFeedback("Error: " + (data.error?.message || "Could not get feedback."));
+        setFeedback("Error details: " + JSON.stringify(data.error || data, null, 2));
       }
     } catch (err) {
       console.error(err);
@@ -273,13 +272,13 @@ export default function App() {
         )}
 
         {feedback && (
-          <div className="mt-6 p-5 bg-green-50 rounded-xl border border-green-200">
+          <div className="mt-6 p-5 bg-green-50 rounded-xl border border-green-200 overflow-x-auto">
             <h3 className="font-bold text-green-800 mb-3">
               💡 Coach's Feedback
             </h3>
-            <div className="text-sm text-gray-800 whitespace-pre-wrap">
+            <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans">
               {feedback}
-            </div>
+            </pre>
           </div>
         )}
 
