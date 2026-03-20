@@ -21,6 +21,18 @@ const MODELS = [
   { id: "custom", name: "Other (Input custom model ID)" }
 ];
 
+const renderHighlightedText = (text) => {
+  if (!text) return null;
+  // Split by **bold** text
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <mark key={i} className="bg-yellow-200 text-gray-900 font-semibold px-1 rounded">{part.slice(2, -2)}</mark>;
+    }
+    return <span key={i}>{part}</span>;
+  });
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('practice');
   const [history, setHistory] = useState([]);
@@ -149,7 +161,7 @@ export default function App() {
           messages: [
             {
               role: "system",
-              content: `You are an expert McKinsey interview coach. Analyze the candidate's response.\nFocus on:\n1. Content: Structured thinking, Top-Down communication, MECE principle.\n2. Tone & Pace: Executive presence, confidence, clarity.\n3. Recommendations: Actionable steps to improve.\n\nYou MUST respond in ONLY valid JSON format with exactly these FIVE keys:\n{\n  "score": "A score out of 10 (e.g. '7/10')",\n  "short_summary": "A 1-sentence overarching summary of their performance.",\n  "content": "Your detailed feedback on structure...",\n  "tone_and_pace": "Your feedback on delivery...",\n  "recommendations": "Your actionable steps..."\n}\nDo not output any other text, markdown blocks, or introduction.`
+              content: `You are an expert McKinsey interview coach. Analyze the candidate's response.\nFocus on:\n1. Content: Structured thinking, Top-Down communication, MECE principle.\n2. Tone & Pace: Executive presence, confidence, clarity.\n3. Recommendations: Actionable steps to improve.\n4. Improved Transcript: Rewrite their exact answer to sound more professional, structured, and impactful. Stay as close to the original as possible. Wrap any modified or added words in **bold**.\n\nYou MUST respond in ONLY valid JSON format with exactly these SIX keys:\n{\n  "score": "A score out of 10 (e.g. '7/10')",\n  "short_summary": "A 1-sentence overarching summary of their performance.",\n  "content": "Your detailed feedback on structure...",\n  "tone_and_pace": "Your feedback on delivery...",\n  "recommendations": "Your actionable steps...",\n  "improved_transcript": "The rewritten transcript with changes in **bold**."\n}\nDo not output any other text, markdown blocks, or introduction.`
             },
             {
               role: "user",
@@ -349,6 +361,15 @@ export default function App() {
                    </div>
                 </div>
 
+                {feedback.improved_transcript && (
+                  <div className="p-4 bg-orange-50 rounded-xl border border-orange-200">
+                    <h3 className="font-bold text-orange-800 mb-2">✨ Improved Transcript</h3>
+                    <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+                      {renderHighlightedText(feedback.improved_transcript)}
+                    </p>
+                  </div>
+                )}
+
                 <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
                   <h3 className="font-bold text-blue-800 mb-2">📊 Content & Structure (McKinsey Style)</h3>
                   <p className="text-sm text-gray-800 whitespace-pre-wrap">{feedback.content}</p>
@@ -413,6 +434,15 @@ export default function App() {
                           ) : '(No transcript)'}"
                         </p>
                       </div>
+
+                      {entry.feedback && entry.feedback.improved_transcript && (
+                        <div className="bg-orange-50 text-orange-800 p-3 rounded-lg text-sm border border-orange-200 mt-3 mb-4">
+                          <p className="font-bold mb-1">✨ Improved Answer:</p>
+                          <p className="whitespace-pre-wrap leading-relaxed text-sm">
+                             {renderHighlightedText(entry.feedback.improved_transcript)}
+                          </p>
+                        </div>
+                      )}
 
                       {entry.feedback && entry.feedback.short_summary && (
                         <div className="bg-green-50 text-green-800 p-3 rounded-lg text-sm border border-green-200">
