@@ -184,7 +184,7 @@ export default function App() {
       <div className="max-w-xl mx-auto bg-white rounded-xl shadow-md p-6">
         
         <header className="flex justify-between items-center mb-6 border-b pb-4">
-          <h1 className="text-xl font-bold text-blue-600">���️ Interview Coach</h1>
+          <h1 className="text-xl font-bold text-blue-600">🎙️ Interview Coach</h1>
           <button 
             onClick={() => setShowSettings(!showSettings)}
             className="text-gray-500 hover:text-gray-800 p-2"
