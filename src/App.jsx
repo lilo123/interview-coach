@@ -165,7 +165,25 @@ export default function App() {
           messages: [
             {
               role: "system",
-              content: `You are an expert McKinsey interview coach. Analyze the candidate's response.\nFocus on:\n1. Content: Structured thinking, Top-Down communication, MECE principle.\n2. Tone & Pace: Executive presence, confidence, clarity.\n3. Recommendations: Actionable steps to improve.\n4. Improved Transcript: Rewrite their exact answer to sound more professional, structured, and impactful. Stay as close to the original as possible. Wrap any modified or added words in **bold**.\n\nYou MUST respond in ONLY valid JSON format with exactly these SIX keys:\n{\n  "score": "A score out of 10 (e.g. '7/10')",\n  "short_summary": "A 1-sentence overarching summary of their performance.",\n  "content": "Your detailed feedback on structure...",\n  "tone_and_pace": "Your feedback on delivery...",\n  "recommendations": "Your actionable steps...",\n  "improved_transcript": "The rewritten transcript with changes in **bold**."\n}\nDo not output any other text, markdown blocks, or introduction.`
+              content: `You are an expert McKinsey interview coach. Analyze the candidate's response.
+Focus on:
+1. Content: Did they actually answer the specific question asked? Structured thinking, Top-Down communication, MECE principle.
+2. Tone & Pace: Executive presence, confidence, clarity.
+3. Recommendations: Actionable steps to improve.
+4. Cleaned Transcript: Clean up the exact answer by removing filler words (ums, ahs, like) and fixing basic grammar. DO NOT change the substance. Wrap any changes in **bold**.
+5. Improved Answer: Rewrite their answer to sound more professional, structured, and impactful. Wrap any modified or added words in **bold**.
+
+You MUST respond in ONLY valid JSON format with exactly these SEVEN keys:
+{
+  "score": "A score out of 10 (e.g. '7/10')",
+  "short_summary": "A 1-sentence overarching summary of their performance.",
+  "content": "Your detailed feedback on structure...",
+  "tone_and_pace": "Your feedback on delivery...",
+  "recommendations": "Your actionable steps...",
+  "cleaned_transcript": "The cleaned up original transcript...",
+  "improved_answer": "The structurally rewritten answer..."
+}
+Do not output any other text, markdown blocks, or introduction.`
             },
             {
               role: "user",
@@ -365,17 +383,17 @@ export default function App() {
                    </div>
                 </div>
 
-                {feedback.improved_transcript && (
-                  <div className="p-4 bg-orange-50 rounded-xl border border-orange-200">
-                    <h3 className="font-bold text-orange-800 mb-2">✨ Improved Transcript</h3>
+                {feedback.cleaned_transcript && (
+                  <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+                    <h3 className="font-bold text-yellow-800 mb-2">🧹 Cleaned Transcript</h3>
                     <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
-                      {renderHighlightedText(feedback.improved_transcript)}
+                      {renderHighlightedText(feedback.cleaned_transcript)}
                     </p>
                   </div>
                 )}
 
                 <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                  <h3 className="font-bold text-blue-800 mb-2">📊 Content & Structure (McKinsey Style)</h3>
+                  <h3 className="font-bold text-blue-800 mb-2">📊 Content & Structure</h3>
                   <p className="text-sm text-gray-800 whitespace-pre-wrap">{feedback.content}</p>
                 </div>
                 <div className="p-4 bg-purple-50 rounded-xl border border-purple-200">
@@ -386,11 +404,11 @@ export default function App() {
                   <h3 className="font-bold text-green-800 mb-2">🎯 Actionable Recommendations</h3>
                   <p className="text-sm text-gray-800 whitespace-pre-wrap">{feedback.recommendations}</p>
                 </div>
-                {feedback.improved_transcript && (
+                {(feedback.improved_answer || feedback.improved_transcript) && (
                   <div className="p-4 bg-orange-50 rounded-xl border border-orange-200 col-span-1 md:col-span-2">
                     <h3 className="font-bold text-orange-800 mb-2">✨ Improved Answer</h3>
                     <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
-                      {renderHighlightedText(feedback.improved_transcript)}
+                      {renderHighlightedText(feedback.improved_answer || feedback.improved_transcript)}
                     </p>
                   </div>
                 )}
@@ -447,11 +465,20 @@ export default function App() {
                         </p>
                       </div>
 
-                      {entry.feedback && entry.feedback.improved_transcript && (
+                      {entry.feedback && entry.feedback.cleaned_transcript && (
+                        <div className="bg-yellow-50 text-yellow-800 p-3 rounded-lg text-sm border border-yellow-200 mt-3 mb-4">
+                          <p className="font-bold mb-1">🧹 Cleaned Transcript:</p>
+                          <p className="whitespace-pre-wrap leading-relaxed text-sm">
+                             {renderHighlightedText(entry.feedback.cleaned_transcript)}
+                          </p>
+                        </div>
+                      )}
+
+                      {entry.feedback && (entry.feedback.improved_answer || entry.feedback.improved_transcript) && (
                         <div className="bg-orange-50 text-orange-800 p-3 rounded-lg text-sm border border-orange-200 mt-3 mb-4">
                           <p className="font-bold mb-1">✨ Improved Answer:</p>
                           <p className="whitespace-pre-wrap leading-relaxed text-sm">
-                             {renderHighlightedText(entry.feedback.improved_transcript)}
+                             {renderHighlightedText(entry.feedback.improved_answer || entry.feedback.improved_transcript)}
                           </p>
                         </div>
                       )}
