@@ -11,23 +11,14 @@ const QUESTIONS = [
 ];
 
 const MODELS = [
-  { id: "mistralai/mistral-small-3.1-24b-instruct:free", name: "Mistral Small 3.1 (Free)" },
-  { id: "google/gemma-3-27b-it:free", name: "Google Gemma 3 27B (Free)" },
-  { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Meta Llama 3.3 70B (Free)" },
-  { id: "nousresearch/hermes-3-llama-3.1-405b:free", name: "Hermes 3 405B (Free)" },
-  { id: "google/gemini-2.5-flash", name: "Gemini 2.5 Flash (Paid/Cheap)" },
-  { id: "openai/gpt-4o-mini", name: "GPT-4o Mini (Paid/Cheap)" },
-  { id: "xiaomi/mimo-v2-omni", name: "Xiaomi MiMo-V2-Omni (Paid/Cheap)" },
-  { id: "xiaomi/mimo-v2-pro", name: "Xiaomi MiMo-V2-Pro (Paid/Cheap)" },
-  { id: "xiaomi/mimo-v2-flash", name: "Xiaomi MiMo-V2-Flash (Paid/Cheap)" },
   { id: "openrouter/free", name: "✨ Auto Free Router (Always Available)" },
-  { id: "nvidia/nemotron-3-super-120b-a12b:free", name: "Nvidia Nemotron 3 (Free)" },
-  { id: "minimax/minimax-m2.5:free", name: "MiniMax M2.5 (Free)" }
+  { id: "custom", name: "Other (Enter custom model ID)" }
 ];
 
 export default function App() {
   const [apiKey, setApiKey] = useState(localStorage.getItem('openrouter_api_key') || '');
-  const [selectedModel, setSelectedModel] = useState(localStorage.getItem('openrouter_model') || MODELS[0].id);
+  const [selectedModel, setSelectedModel] = useState(localStorage.getItem('openrouter_model') || 'openrouter/free');
+  const [customModel, setCustomModel] = useState(localStorage.getItem('openrouter_custom_model') || '');
   const [showSettings, setShowSettings] = useState(!apiKey);
   
   const [currentQuestion, setCurrentQuestion] = useState(QUESTIONS[0]);
@@ -74,6 +65,7 @@ export default function App() {
   const saveSettings = () => {
     localStorage.setItem('openrouter_api_key', apiKey);
     localStorage.setItem('openrouter_model', selectedModel);
+    localStorage.setItem('openrouter_custom_model', customModel);
     setShowSettings(false);
   };
 
@@ -157,7 +149,7 @@ export default function App() {
           "X-Title": "Interview Coach App"
         },
         body: JSON.stringify({
-          model: selectedModel, 
+          model: selectedModel === 'custom' ? customModel : selectedModel, 
           messages: [
             { 
               role: "system", 
@@ -231,6 +223,15 @@ export default function App() {
                 <option key={m.id} value={m.id}>{m.name}</option>
               ))}
             </select>
+            {selectedModel === 'custom' && (
+              <input 
+                type="text" 
+                value={customModel}
+                onChange={(e) => setCustomModel(e.target.value)}
+                placeholder="e.g. google/gemini-2.5-flash"
+                className="w-full p-2 border rounded mb-4"
+              />
+            )}
 
             <button 
               onClick={saveSettings}
