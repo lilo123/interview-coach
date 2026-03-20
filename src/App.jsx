@@ -115,7 +115,7 @@ export default function App() {
       };
 
       mediaRecorder.current.onstop = () => {
-        const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunks.current, { type: mediaRecorder.current.mimeType || 'audio/mp4' });
         setAudioUrl(URL.createObjectURL(audioBlob));
       };
 
