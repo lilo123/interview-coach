@@ -161,7 +161,7 @@ export default function App() {
           messages: [
             { 
               role: "system", 
-              content: "You are an expert interview coach. Analyze the user's interview response based on the transcribed text. Provide brief, actionable feedback on: 1. Content (Did they answer the question well?) 2. Tone & Pace (Do they sound confident, based on the text structure and filler words?) Be encouraging but constructive."
+              content: `You are an expert McKinsey interview coach. Analyze the candidate's response.\nFocus on:\n1. Content: Structured thinking, Top-Down communication, MECE principle.\n2. Tone & Pace: Executive presence, confidence, clarity.\n3. Recommendations: Actionable steps to improve.\n\nYou MUST respond in ONLY valid JSON format with exactly these three keys:\n{\n  "content": "Your feedback...",\n  "tone_and_pace": "Your feedback...",\n  "recommendations": "Your recommendations..."\n}\nDo not output any other text or markdown block.`
             },
             { 
               role: "user", 
@@ -173,7 +173,15 @@ export default function App() {
 
       const data = await response.json();
       if (data.choices && data.choices[0]) {
-        setFeedback(data.choices[0].message.content);
+        const rawContent = data.choices[0].message.content;
+        try {
+          const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+          const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : rawContent);
+          setFeedback(parsed);
+        } catch (e) {
+          console.error("Failed to parse JSON", rawContent);
+          setFeedback(rawContent);
+        }
       } else {
         setFeedback(`Error from ${selectedModel}:\n` + JSON.stringify(data.error || data, null, 2));
       }
@@ -298,16 +306,27 @@ export default function App() {
           </div>
         )}
 
-        {feedback && (
-          <div className="mt-6 p-5 bg-green-50 rounded-xl border border-green-200 overflow-x-auto">
-            <h3 className="font-bold text-green-800 mb-3">
-              💡 Coach's Feedback
-            </h3>
-            <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans">
-              {feedback}
-            </pre>
+        {feedback && typeof feedback === 'object' && !Array.isArray(feedback) ? (
+          <div className="mt-6 space-y-4 text-left">
+            <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+              <h3 className="font-bold text-blue-800 mb-2">📊 Content & Structure (McKinsey Style)</h3>
+              <p className="text-sm text-gray-800 whitespace-pre-wrap">{feedback.content}</p>
+            </div>
+            <div className="p-4 bg-purple-50 rounded-xl border border-purple-200">
+              <h3 className="font-bold text-purple-800 mb-2">🗣️ Tone & Executive Presence</h3>
+              <p className="text-sm text-gray-800 whitespace-pre-wrap">{feedback.tone_and_pace}</p>
+            </div>
+            <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+              <h3 className="font-bold text-green-800 mb-2">🎯 Actionable Recommendations</h3>
+              <p className="text-sm text-gray-800 whitespace-pre-wrap">{feedback.recommendations}</p>
+            </div>
           </div>
-        )}
+        ) : feedback ? (
+          <div className="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200 overflow-x-auto text-left">
+            <h3 className="font-bold text-gray-800 mb-3">💡 Raw Feedback</h3>
+            <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans">{typeof feedback === 'string' ? feedback : JSON.stringify(feedback, null, 2)}</pre>
+          </div>
+        ) : null}
 
       </div>
     </div>
