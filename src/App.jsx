@@ -10,8 +10,18 @@ const QUESTIONS = [
   "Describe a time you disagreed with a coworker or manager."
 ];
 
+const MODELS = [
+  { id: "mistralai/mistral-small-3.1-24b-instruct:free", name: "Mistral Small 3.1 (Free)" },
+  { id: "google/gemma-3-27b-it:free", name: "Google Gemma 3 27B (Free)" },
+  { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Meta Llama 3.3 70B (Free)" },
+  { id: "nousresearch/hermes-3-llama-3.1-405b:free", name: "Hermes 3 405B (Free)" },
+  { id: "google/gemini-2.5-flash", name: "Gemini 2.5 Flash (Paid/Cheap)" },
+  { id: "openai/gpt-4o-mini", name: "GPT-4o Mini (Paid/Cheap)" }
+];
+
 export default function App() {
   const [apiKey, setApiKey] = useState(localStorage.getItem('openrouter_api_key') || '');
+  const [selectedModel, setSelectedModel] = useState(localStorage.getItem('openrouter_model') || MODELS[0].id);
   const [showSettings, setShowSettings] = useState(!apiKey);
   
   const [currentQuestion, setCurrentQuestion] = useState(QUESTIONS[0]);
@@ -55,8 +65,9 @@ export default function App() {
     }
   }, []);
 
-  const saveApiKey = () => {
+  const saveSettings = () => {
     localStorage.setItem('openrouter_api_key', apiKey);
+    localStorage.setItem('openrouter_model', selectedModel);
     setShowSettings(false);
   };
 
@@ -140,7 +151,7 @@ export default function App() {
           "X-Title": "Interview Coach App"
         },
         body: JSON.stringify({
-          model: "mistralai/mistral-small-3.1-24b-instruct:free", 
+          model: selectedModel, 
           messages: [
             { 
               role: "system", 
@@ -158,7 +169,7 @@ export default function App() {
       if (data.choices && data.choices[0]) {
         setFeedback(data.choices[0].message.content);
       } else {
-        setFeedback("Error details: " + JSON.stringify(data.error || data, null, 2));
+        setFeedback(`Error from ${selectedModel}:\n` + JSON.stringify(data.error || data, null, 2));
       }
     } catch (err) {
       console.error(err);
@@ -173,7 +184,7 @@ export default function App() {
       <div className="max-w-xl mx-auto bg-white rounded-xl shadow-md p-6">
         
         <header className="flex justify-between items-center mb-6 border-b pb-4">
-          <h1 className="text-xl font-bold text-blue-600">🎙️ Interview Coach</h1>
+          <h1 className="text-xl font-bold text-blue-600">���️ Interview Coach</h1>
           <button 
             onClick={() => setShowSettings(!showSettings)}
             className="text-gray-500 hover:text-gray-800 p-2"
@@ -188,21 +199,31 @@ export default function App() {
             <p className="text-sm text-gray-600 mb-3">
               Stored safely in your browser. Share this key with your friend privately.
             </p>
-            <div className="flex gap-2">
-              <input 
-                type="password" 
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk-or-v1-..."
-                className="flex-1 p-2 border rounded"
-              />
-              <button 
-                onClick={saveApiKey}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-              >
-                Save
-              </button>
-            </div>
+            <input 
+              type="password" 
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="sk-or-v1-..."
+              className="w-full p-2 border rounded mb-4"
+            />
+
+            <h2 className="font-semibold mb-2">AI Model</h2>
+            <select 
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              className="w-full p-2 border rounded mb-4 bg-white"
+            >
+              {MODELS.map(m => (
+                <option key={m.id} value={m.id}>{m.name}</option>
+              ))}
+            </select>
+
+            <button 
+              onClick={saveSettings}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-bold"
+            >
+              Save Settings
+            </button>
           </div>
         )}
 
