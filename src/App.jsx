@@ -16,7 +16,10 @@ const MODELS = [
   { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Meta Llama 3.3 70B (Free)" },
   { id: "nousresearch/hermes-3-llama-3.1-405b:free", name: "Hermes 3 405B (Free)" },
   { id: "google/gemini-2.5-flash", name: "Gemini 2.5 Flash (Paid/Cheap)" },
-  { id: "openai/gpt-4o-mini", name: "GPT-4o Mini (Paid/Cheap)" }
+  { id: "openai/gpt-4o-mini", name: "GPT-4o Mini (Paid/Cheap)" },
+  { id: "xiaomi/mimo-v2-omni", name: "Xiaomi MiMo-V2-Omni (Paid/Cheap)" },
+  { id: "xiaomi/mimo-v2-pro", name: "Xiaomi MiMo-V2-Pro (Paid/Cheap)" },
+  { id: "xiaomi/mimo-v2-flash", name: "Xiaomi MiMo-V2-Flash (Paid/Cheap)" }
 ];
 
 export default function App() {
