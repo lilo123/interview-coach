@@ -16,9 +16,8 @@ const QUESTIONS = [
 ];
 
 const MODELS = [
-  { id: "google/gemini-2.0-flash-lite-preview-02-05:free", name: "Gemini 2.0 Flash (Free)" },
-  { id: "mistralai/mistral-small-3-instruct-2501:free", name: "Mistral Small 3 (Free)" },
-  { id: "custom", name: "Other (Input custom model ID)" }
+  { id: "openrouter/free", name: "Auto Free Router (openrouter/free)" },
+  { id: "custom", name: "Other (please specify)" }
 ];
 
 const renderHighlightedText = (text) => {
