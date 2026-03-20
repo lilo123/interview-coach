@@ -99,7 +99,7 @@ export default function App() {
     setErrorMsg("");
   };
 
-  const startRecording = async () => {
+    const startRecording = async () => {
     setTranscript("");
     setAudioUrl(null);
     setFeedback(null);
@@ -108,14 +108,24 @@ export default function App() {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
+      
+      let options = {};
+      if (typeof MediaRecorder.isTypeSupported === 'function') {
+        if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          options = { mimeType: 'audio/mp4' };
+        } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+          options = { mimeType: 'audio/webm' };
+        }
+      }
+      mediaRecorder.current = new MediaRecorder(stream, options);
 
       mediaRecorder.current.ondataavailable = (e) => {
         if (e.data.size > 0) audioChunks.current.push(e.data);
       };
 
       mediaRecorder.current.onstop = () => {
-        const audioBlob = new Blob(audioChunks.current, { type: mediaRecorder.current.mimeType || 'audio/mp4' });
+        const type = mediaRecorder.current.mimeType || (audioChunks.current[0] && audioChunks.current[0].type) || 'audio/mp4';
+        const audioBlob = new Blob(audioChunks.current, { type });
         setAudioUrl(URL.createObjectURL(audioBlob));
       };
 
