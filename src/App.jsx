@@ -381,6 +381,14 @@ export default function App() {
                   <h3 className="font-bold text-green-800 mb-2">🎯 Actionable Recommendations</h3>
                   <p className="text-sm text-gray-800 whitespace-pre-wrap">{feedback.recommendations}</p>
                 </div>
+                {feedback.improved_transcript && (
+                  <div className="p-4 bg-orange-50 rounded-xl border border-orange-200 col-span-1 md:col-span-2">
+                    <h3 className="font-bold text-orange-800 mb-2">✨ Improved Answer</h3>
+                    <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+                      {renderHighlightedText(feedback.improved_transcript)}
+                    </p>
+                  </div>
+                )}
               </div>
             ) : feedback ? (
               <div className="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200 overflow-x-auto text-left">
