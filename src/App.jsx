@@ -170,7 +170,7 @@ Focus on:
 1. Content: Did they actually answer the specific question asked? Structured thinking, Top-Down communication, MECE principle.
 2. Tone & Pace: Executive presence, confidence, clarity.
 3. Recommendations: Actionable steps to improve.
-4. Cleaned Transcript: Clean up the exact answer by removing filler words (ums, ahs, like) and fixing basic grammar. DO NOT change the substance. Wrap any changes in **bold**.
+4. Cleaned Transcript: Fix transcription errors (misheard words by the microphone) to reflect what the candidate actually said. DO NOT remove filler words (um, ah, like), false starts, or fix the candidate's grammar. DO NOT change the substance. Wrap any corrected transcription errors in **bold**.
 5. Improved Answer: Rewrite their answer to sound more professional, structured, and impactful. Wrap any modified or added words in **bold**.
 
 You MUST respond in ONLY valid JSON format with exactly these SEVEN keys:
