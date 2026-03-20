@@ -16,7 +16,7 @@ const QUESTIONS = [
 ];
 
 const MODELS = [
-  { id: "openrouter/free", name: "Auto Free Router (openrouter/free)" },
+  { id: "openrouter/auto", name: "Auto Free Router" },
   { id: "custom", name: "Other (please specify)" }
 ];
 
@@ -55,7 +55,10 @@ export default function App() {
 
   useEffect(() => {
     const savedKey = localStorage.getItem('or_api_key') || "";
-    const savedModel = localStorage.getItem('or_model') || MODELS[0].id;
+    let savedModel = localStorage.getItem('or_model') || MODELS[0].id;
+    if (savedModel !== 'custom' && !MODELS.find(m => m.id === savedModel)) {
+      savedModel = MODELS[0].id;
+    }
     const savedCustom = localStorage.getItem('or_custom_model') || "";
     const savedHistory = JSON.parse(localStorage.getItem('interview_history') || "[]");
 
@@ -109,22 +112,14 @@ export default function App() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
-      let options = {};
-      if (typeof MediaRecorder.isTypeSupported === 'function') {
-        if (MediaRecorder.isTypeSupported('audio/mp4')) {
-          options = { mimeType: 'audio/mp4' };
-        } else if (MediaRecorder.isTypeSupported('audio/webm')) {
-          options = { mimeType: 'audio/webm' };
-        }
-      }
-      mediaRecorder.current = new MediaRecorder(stream, options);
+      mediaRecorder.current = new MediaRecorder(stream);
 
       mediaRecorder.current.ondataavailable = (e) => {
         if (e.data.size > 0) audioChunks.current.push(e.data);
       };
 
       mediaRecorder.current.onstop = () => {
-        const type = mediaRecorder.current.mimeType || (audioChunks.current[0] && audioChunks.current[0].type) || 'audio/mp4';
+        const type = audioChunks.current[0] ? audioChunks.current[0].type : 'audio/webm';
         const audioBlob = new Blob(audioChunks.current, { type });
         setAudioUrl(URL.createObjectURL(audioBlob));
       };
