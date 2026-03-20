@@ -16,7 +16,8 @@ const QUESTIONS = [
 ];
 
 const MODELS = [
-  { id: "openrouter/auto", name: "Auto Free Router" },
+  { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B (Free)" },
+  { id: "google/gemma-3-27b-it:free", name: "Gemma 3 27B (Free)" },
   { id: "custom", name: "Other (please specify)" }
 ];
 
