@@ -19,7 +19,10 @@ const MODELS = [
   { id: "openai/gpt-4o-mini", name: "GPT-4o Mini (Paid/Cheap)" },
   { id: "xiaomi/mimo-v2-omni", name: "Xiaomi MiMo-V2-Omni (Paid/Cheap)" },
   { id: "xiaomi/mimo-v2-pro", name: "Xiaomi MiMo-V2-Pro (Paid/Cheap)" },
-  { id: "xiaomi/mimo-v2-flash", name: "Xiaomi MiMo-V2-Flash (Paid/Cheap)" }
+  { id: "xiaomi/mimo-v2-flash", name: "Xiaomi MiMo-V2-Flash (Paid/Cheap)" },
+  { id: "openrouter/free", name: "✨ Auto Free Router (Always Available)" },
+  { id: "nvidia/nemotron-3-super-120b-a12b:free", name: "Nvidia Nemotron 3 (Free)" },
+  { id: "minimax/minimax-m2.5:free", name: "MiniMax M2.5 (Free)" }
 ];
 
 export default function App() {
